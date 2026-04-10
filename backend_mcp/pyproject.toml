@@ -1,0 +1,49 @@
+[project]
+name = "backend-mcp"
+version = "0.1.0"
+description = "Production MCP backend service for Saynoma"
+readme = "README.md"
+authors = [
+    { name = "Mohammed Nayal", email = "nayal@volmatica.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "duckduckgo-search>=8.1.1",
+    "email-validator>=2.3.0",
+    "fastapi>=0.135.3",
+    "httpx>=0.28.1",
+    "mcp>=1.27.0",
+    "motor>=3.7.1",
+    "orjson>=3.11.8",
+    "passlib[bcrypt]>=1.7.4",
+    "prometheus-client>=0.25.0",
+    "pydantic-settings>=2.13.1",
+    "pypdf>=6.10.0",
+    "python-jose[cryptography]>=3.5.0",
+    "redis>=7.4.0",
+    "structlog>=25.5.0",
+    "uvicorn[standard]>=0.44.0",
+    "wikipedia>=1.4.0",
+]
+
+[project.scripts]
+backend-mcp = "backend_mcp.main:main"
+backend-mcp-bootstrap-db = "backend_mcp.db.bootstrap:main"
+
+[build-system]
+requires = ["uv_build>=0.10.4,<0.11.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.20.0",
+    "pytest>=9.0.3",
+    "pytest-asyncio>=1.3.0",
+    "ruff>=0.15.10",
+    "testcontainers>=4.14.2",
+]
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: marks tests requiring Docker and external services",
+]
