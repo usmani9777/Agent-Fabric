@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        backend: [backend_mcp, backend_langgraph]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Sync dependencies
+        working-directory: ${{ matrix.backend }}
+        run: uv sync --dev
+
+      - name: Ruff
+        working-directory: ${{ matrix.backend }}
+        run: uv run ruff check .
+
+      - name: Mypy
+        working-directory: ${{ matrix.backend }}
+        run: uv run mypy src
+
+      - name: Pytest
+        working-directory: ${{ matrix.backend }}
+        run: uv run pytest
+
+  integration:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        backend: [backend_mcp, backend_langgraph]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Sync dependencies
+        working-directory: ${{ matrix.backend }}
+        run: uv sync --dev
+
+      - name: Run integration tests
+        working-directory: ${{ matrix.backend }}
+        run: uv run pytest -m integration

@@ -1,0 +1,42 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: saynoma-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    container_name: saynoma-redis
+    ports:
+      - "6379:6379"
+
+  backend-mcp:
+    build:
+      context: ./backend_mcp
+    container_name: backend-mcp
+    ports:
+      - "8081:8081"
+    env_file:
+      - ./backend_mcp/.env.example
+    depends_on:
+      - mongo
+      - redis
+
+  backend-langgraph:
+    build:
+      context: ./backend_langgraph
+    container_name: backend-langgraph
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./backend_langgraph/.env.example
+    depends_on:
+      - mongo
+      - redis
+      - backend-mcp
+
+volumes:
+  mongo-data:
